@@ -29,7 +29,6 @@ img_in = cv2.imread(sys.argv[1]).astype(np.float64)
 h, w, _ = img_in.shape
 
 img_out = np.zeros((h, w, 3), dtype=np.ubyte)
-img_out[:] = [255, 255, 255]
 
 # Algo extraction fond vert
 for y in range(0, h):
@@ -41,7 +40,8 @@ for y in range(0, h):
 
         (h, s, v) = (computeHue(r, g, b, delta, colorMax), computeSaturation(delta, colorMax), colorMax)
 
+        # green hsv parameter threshold
         if not ((h >= 65 and h <= 180) and s > 0.15 and v > 0.1):
-            img_out[y,x] = (0, 0, 0)
+            img_out[y,x] = (255, 255, 255)
 
 cv2.imwrite(sys.argv[2], img_out)
