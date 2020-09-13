@@ -1,47 +1,32 @@
 import numpy as np
 import cv2
 import sys
+import os
+import mywork
 
-def computeHue(r, g , b, delta, colorMax):
-    if(delta == 0):
-        return 0
+if __name__ == '__main__':
+    nbArg = len(sys.argv)
 
-    if(colorMax == r):
-        return 60 * (((g - b) / delta) % 6)
+    if nbArg < 3 or nbArg > 4:
+        print('Usage :')
+        print(
+            'Programme <Chemin de l\'image d\'entrée (.png)> <Chemin du repertoire de l\'image de sortie (.png)> '
+            'Optionnel: <fonction de filtrage>')
+        print(
+            'Fonction de filtrage:\n\t0 : Filtre teinte verte\n\t1 : Filtre de saturation passe bas\n\n\tPar defaut: '
+            'Filtre teinte verte')
+        exit()
 
-    elif(colorMax == g):
-        return 60 * (((b - r) / delta) + 2)
+    filterFunc = mywork.greenFilter
+    if nbArg == 4:
+        numFilter = int(sys.argv[3])
+        if numFilter == 0:
+            filterFunc = mywork.greenFilter
+        elif numFilter == 1:
+            filterFunc = mywork.lowPassSaturationFilter
+        else:
+            filterFunc = mywork.greenFilter
 
-    elif(colorMax == b):
-        return 60 * (((r - g) / delta) + 4)
-
-def computeSaturation(delta, colorMax):
-    return 0 if (colorMax == 0) else delta / colorMax
-
-nbArg = len(sys.argv)
-
-if nbArg != 3:
-    print('programme <nom fichier d\'entrée (.png)> <nom fichier de sortie (.png)>')
-    exit()
-
-img_in = cv2.imread(sys.argv[1]).astype(np.float64)
-
-h, w, _ = img_in.shape
-
-img_out = np.zeros((h, w, 3), dtype=np.ubyte)
-
-# Algo extraction fond vert
-for y in range(0, h):
-    for x in range(0, w):
-        b, g, r  = img_in[y, x]
-        colorMax = max(r, g, b)
-        colorMin = min(r, g, b)
-        delta    = colorMax - colorMin
-
-        (h, s, v) = (computeHue(r, g, b, delta, colorMax), computeSaturation(delta, colorMax), colorMax)
-
-        # green hsv parameter threshold
-        if not ((h >= 65 and h <= 180) and s > 0.15 and v > 0.1):
-            img_out[y,x] = (255, 255, 255)
-
-cv2.imwrite(sys.argv[2], img_out)
+    out_img = mywork.computeGreenExtractionMask(cv2.imread(sys.argv[1]).astype(np.float64), filterFunc)
+    in_filename = os.path.split(os.path.splitext(sys.argv[1])[0])[1]
+    cv2.imwrite(sys.argv[2] + '/' + in_filename + '_mask.png', out_img)
