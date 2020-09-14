@@ -15,9 +15,9 @@ def computeGrayImg(in_img, hsvOptions):
             if hsvOptions == 0:
                 value = h
             elif hsvOptions == 1:
-                value = s
+                value = s * 100
             elif hsvOptions == 2:
-                value = v
+                value = v * 100
             else:
                 value = 0
 
@@ -41,4 +41,4 @@ if __name__ == '__main__':
 
     out_img = computeGrayImg(cv2.imread(sys.argv[1]).astype(np.float64), hsvOption)
     in_filename = os.path.split(os.path.splitext(sys.argv[1])[0])[1]
-    cv2.imwrite(sys.argv[2] + '/' + in_filename + '_mask.png', out_img)
+    cv2.imwrite(sys.argv[2] + '/' + in_filename + '_gray.png', out_img)
