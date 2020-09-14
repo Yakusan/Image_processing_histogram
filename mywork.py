@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def computeHue(r, g, b, delta, colorMax):
     if delta == 0:
         return 0
@@ -17,11 +18,13 @@ def computeHue(r, g, b, delta, colorMax):
 def computeSaturation(delta, colorMax):
     return 0 if colorMax == 0 else delta / colorMax
 
+
 def RGB2HSV_Pixel(rgbPixel):
     r, g, b = rgbPixel
     colorMax = max(r, g, b)
     delta = colorMax - min(r, g, b)
     return computeHue(r, g, b, delta, colorMax), computeSaturation(delta, colorMax), colorMax
+
 
 def greenFilter(in_img):
     height, width, _ = in_img.shape
