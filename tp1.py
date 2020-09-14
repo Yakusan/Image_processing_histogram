@@ -10,8 +10,8 @@ if __name__ == '__main__':
     if nbArg < 3 or nbArg > 4:
         print('Usage :')
         print(
-            'Programme <Chemin de l\'image d\'entrée (.png)> <Chemin du repertoire de l\'image de sortie (.png)> '
-            'Optionnel: <fonction de filtrage>')
+            'Programme <Chemin de l\'image d\'entrée (.png)> <Chemin du repertoire pour '
+            'generer l\'image de sortie (.png)> Optionnel: <fonction de filtrage>')
         print(
             'Fonction de filtrage:\n\t0 : Filtre teinte verte\n\t1 : Filtre de saturation passe bas\n\n\tPar defaut: '
             'Filtre teinte verte')

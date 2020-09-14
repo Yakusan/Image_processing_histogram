@@ -2,7 +2,7 @@ import numpy as np
 
 
 def computeHue(r, g, b, delta, colorMax):
-    if delta == 0:
+    if delta == 0.00:
         return 0
 
     if colorMax == r:

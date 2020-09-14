@@ -13,11 +13,14 @@ def computeGrayImg(in_img, hsvOptions):
             h, s, v = mywork.RGB2HSV_Pixel(in_img[y, x])
 
             if hsvOptions == 0:
-                value = h
+                h = h - 30
+                if h < 0:
+                    h = h + 30
+                value = h / 360 * 255
             elif hsvOptions == 1:
-                value = s * 100
+                value = s * 255
             elif hsvOptions == 2:
-                value = v * 100
+                value = v * 255
             else:
                 value = 0
 
@@ -32,8 +35,8 @@ if __name__ == '__main__':
     if nbArg < 3 or nbArg > 4:
         print('Usage :')
         print(
-            'Programme <Chemin de l\'image d\'entrée (.png)> <Chemin du repertoire de l\'image de sortie (.png)> '
-            'Optionnel: <valeur H, S ou V niveau de gris>')
+            'Programme <Chemin de l\'image d\'entrée (.png)> <Chemin du repertoire pour '
+            'generer l\'image de sortie (.png)> Optionnel: <valeur H, S ou V niveau de gris>')
         print('\t0 : h\n\t1 : s\n\t2 : v\n\n\tPar defaut: h')
         exit()
 
