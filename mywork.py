@@ -26,36 +26,28 @@ def RGB2HSV_Pixel(rgbPixel):
     return computeHue(r, g, b, delta, colorMax), computeSaturation(delta, colorMax), colorMax
 
 
-def greenFilter(in_img):
+def normalViewGreenFilter(h, s, out_img_nvgf, x, y):
+    # Normal green screen filter
+    if s < 0.3 or h <= 95. or h >= 140.:
+        out_img_nvgf[y, x] = (255, 255, 255)
+
+
+def largeViewGreenFilter(h, s, out_img_lvgf, x, y):
+    # Large view green screen filter
+    if s < 0.45 and (h <= 95. or h >= 125.):
+        out_img_lvgf[y, x] = (255, 255, 255)
+
+
+def computeGreenExtractionMask(in_img, filter):
     height, width, _ = in_img.shape
-    out_img_gf = np.zeros((height, width, 3), dtype=np.ubyte)
+    out_img = np.zeros((height, width, 3), dtype=np.ubyte)
     for y in range(0, height):
         for x in range(0, width):
-            h, s, v = RGB2HSV_Pixel(in_img[y, x])
+            h, s, _ = RGB2HSV_Pixel(in_img[y, x])
 
-            # Green filter
-            if not (95. <= h <= 140. and s > 0.35 and v > 0.25):
-                out_img_gf[y, x] = (255, 255, 255)
+            filter(h, s, out_img, x, y)
 
-    return out_img_gf
-
-
-def lowPassSaturationFilter(in_img):
-    height, width, _ = in_img.shape
-    out_img_lpsf = np.zeros((height, width, 3), dtype=np.ubyte)
-    for y in range(0, height):
-        for x in range(0, width):
-            h, s, v = RGB2HSV_Pixel(in_img[y, x])
-
-            # Saturation filter
-            if s <= 0.15:
-                out_img_lpsf[y, x] = (255, 255, 255)
-
-    return out_img_lpsf
-
-
-def computeGreenExtractionMask(in_img, filterParam):
-    return filterParam(in_img)
+    return out_img
 
 
 def computeGrayImg(in_img, hsvOptions):
@@ -78,6 +70,7 @@ def computeGrayImg(in_img, hsvOptions):
 
     return out_img_gray
 
+
 def computeHSVImg(in_img):
     height, width, _ = in_img.shape
     out_img_hsv = np.zeros((height, width, 3), dtype=np.float64)
@@ -86,4 +79,3 @@ def computeHSVImg(in_img):
             out_img_hsv[y, x] = RGB2HSV_Pixel(in_img[y, x])
 
     return out_img_hsv
-

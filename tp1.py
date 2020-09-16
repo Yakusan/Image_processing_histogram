@@ -11,21 +11,16 @@ if __name__ == '__main__':
         print('Usage :')
         print(
             'Programme <Chemin de l\'image d\'entrée (.png)> <Chemin du repertoire pour '
-            'generer l\'image de sortie (.png)> Optionnel: <fonction de filtrage>')
+            'generer l\'image de sortie (.png)> Optionnel: <C\'est un plan large ?>')
         print(
-            'Fonction de filtrage:\n\t0 : Filtre teinte verte\n\t1 : Filtre de saturation passe bas\n\n\tPar defaut: '
-            'Filtre teinte verte')
+            'Plan large ? True or False\n\n\tPar defaut: False')
         exit()
 
-    filterFunc = mywork.greenFilter
+    filterFunc = mywork.normalViewGreenFilter
     if nbArg == 4:
-        numFilter = int(sys.argv[3])
-        if numFilter == 0:
-            filterFunc = mywork.greenFilter
-        elif numFilter == 1:
-            filterFunc = mywork.lowPassSaturationFilter
-        else:
-            filterFunc = mywork.greenFilter
+        isLargePlan = bool(sys.argv[3])
+        if isLargePlan:
+            filterFunc = mywork.largeViewGreenFilter
 
     out_img = mywork.computeGreenExtractionMask(cv2.imread(sys.argv[1]).astype(np.float64), filterFunc)
     in_filename = os.path.split(os.path.splitext(sys.argv[1])[0])[1]
