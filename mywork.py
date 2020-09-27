@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 
 def computeHue(r, g, b, delta, colorMax):
@@ -26,28 +27,40 @@ def RGB2HSV_Pixel(rgbPixel):
     return computeHue(r, g, b, delta, colorMax), computeSaturation(delta, colorMax), colorMax
 
 
-def normalViewGreenFilter(h, s, out_img_nvgf, x, y):
-    # Normal green screen filter
-    if s < 0.3 or h <= 95. or h >= 140.:
-        out_img_nvgf[y, x] = (255, 255, 255)
-
-
-def largeViewGreenFilter(h, s, out_img_lvgf, x, y):
-    # Large view green screen filter
-    if s < 0.45 and (h <= 95. or h >= 125.):
-        out_img_lvgf[y, x] = (255, 255, 255)
-
-
-def computeGreenExtractionMask(in_img, filter):
+def normalViewGreenFilter(in_img):
     height, width, _ = in_img.shape
-    out_img = np.zeros((height, width, 3), dtype=np.ubyte)
+    tmp_img = np.zeros((height, width, 3), dtype=np.ubyte)
+    kernel11 = np.ones((11, 11), np.uint8)
     for y in range(0, height):
         for x in range(0, width):
             h, s, _ = RGB2HSV_Pixel(in_img[y, x])
+            # Normal green screen filter
+            if s < 0.3 or h <= 95. or h >= 140.:
+                tmp_img[y, x] = (255, 255, 255)
 
-            filter(h, s, out_img, x, y)
+    close_img = cv2.morphologyEx(tmp_img, cv2.MORPH_CLOSE, kernel11)
+    return cv2.morphologyEx(close_img, cv2.MORPH_OPEN, kernel11)
 
-    return out_img
+
+def largeViewGreenFilter(in_img):
+    height, width, _ = in_img.shape
+    tmp_img = np.zeros((height, width, 3), dtype=np.ubyte)
+    kernel11 = np.ones((11, 11), np.uint8)
+    kernel27 = np.ones((27, 27), np.uint8)
+    for y in range(0, height):
+        for x in range(0, width):
+            h, s, _ = RGB2HSV_Pixel(in_img[y, x])
+            # Large view green screen filter
+            if s < 0.45 and (h <= 95. or h >= 140.):
+                tmp_img[y, x] = (255, 255, 255)
+
+    close_img = cv2.morphologyEx(tmp_img, cv2.MORPH_CLOSE, kernel11)
+    open_img = cv2.morphologyEx(close_img, cv2.MORPH_OPEN, kernel11)
+    return cv2.morphologyEx(open_img, cv2.MORPH_OPEN, kernel27)
+
+
+def computeGreenExtractionMask(filterFunc, in_img):
+    return filterFunc(in_img)
 
 
 def computeGrayImg(in_img, hsvOptions):

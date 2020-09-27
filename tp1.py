@@ -19,20 +19,15 @@ if __name__ == '__main__':
 
     filterFunc = mywork.normalViewGreenFilter
     files = glob.glob(sys.argv[1] + '/*.png')
+    directory = sys.argv[2]
     if nbArg == 4:
         isLargePlan = bool(sys.argv[3])
         if isLargePlan:
             filterFunc = mywork.largeViewGreenFilter
             files = glob.glob(sys.argv[1] + '/Plan large/*.png')
-
-    # kernel5 = np.ones((5, 55), np.uint8)
-    kernel11 = np.ones((11, 11), np.uint8)
+            directory = directory + '/Plan large'
 
     for file in files:
-        result_img = mywork.computeGreenExtractionMask(cv2.imread(file).astype(np.float64), filterFunc)
-
-        close_img = cv2.morphologyEx(result_img, cv2.MORPH_CLOSE, kernel11)
-        out_img = cv2.morphologyEx(close_img, cv2.MORPH_OPEN, kernel11)
-
+        out_img = mywork.computeGreenExtractionMask(filterFunc, cv2.imread(file).astype(np.float64))
         in_filename = os.path.split(os.path.splitext(file)[0])[1]
-        cv2.imwrite(sys.argv[2] + '/' + in_filename + '_mask.png', out_img)
+        cv2.imwrite(directory + '/' + in_filename + '_mask.png', out_img)
