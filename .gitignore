@@ -1,4 +1,6 @@
+.idea
 asset
+venv
 __pycache__
 hue_graph.png
 luminosite_graph.png
