@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import sys
-import mywork
+import segmentation
 
 if __name__ == '__main__':
     nbArg = len(sys.argv)
@@ -20,7 +20,7 @@ if __name__ == '__main__':
         print('\t0 : Teinte\n\t1 : Saturation\n\t2 : Luminosite')
         exit()
 
-    hsv_img = mywork.computeHSVImg(cv2.imread(sys.argv[1]).astype(np.float64))
+    hsv_img = segmentation.computeHSVImg(cv2.imread(sys.argv[1]).astype(np.float64))
     hist = hsv_img[:, :, hsvOption].ravel()
 
     hsvParam = 360 if hsvOption == 0 else 100

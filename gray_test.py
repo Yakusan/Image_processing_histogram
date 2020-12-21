@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import sys
 import os
-import mywork
+import segmentation
 
 
 if __name__ == '__main__':
@@ -26,6 +26,6 @@ if __name__ == '__main__':
     elif hsvOption == 2:
         strMode = 'value'
 
-    out_img = mywork.computeGrayImg(cv2.imread(sys.argv[1]).astype(np.float64), hsvOption)
+    out_img = segmentation.computeGrayImg(cv2.imread(sys.argv[1]).astype(np.float64), hsvOption)
     in_filename = os.path.split(os.path.splitext(sys.argv[1])[0])[1]
     cv2.imwrite(sys.argv[2] + '/' + in_filename + '_gray_' + strMode + '.png', out_img)
